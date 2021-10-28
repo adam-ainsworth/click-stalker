@@ -15,7 +15,9 @@ Allows you to add arbitrary tracking code to downloadable assets that a user can
 
 If you have downloadable assets on your site such as PDFs and would like to track when users download them via tracking scripts or pixels, this plugin will allow you to do that.
 
-It should work with ANY site, by dynamically introducing an intermediary page when the user clicks, waitd for the code to fire and then forward the user on to the asset.
+It should work with ANY site, by dynamically introducing an intermediary page when the user clicks, waiting for the code to fire (subject to a 100ms timeout) and then forward the user on to the asset.
+
+*Please ensure that the code works properly as it is possible to break all downloadable assets on your site with buggy scripts / markup.*
 
 == Installation ==
 
@@ -43,9 +45,13 @@ None planned, but different code depending on the asset is a possibility. Probab
 
 Please contact me if you would like any other enhancements - https://adamainsworth.co.uk/contact
 
-= Why is it called 'Click Stalker' =
+= Why is it called 'Click Stalker'? =
 
 Because click tracking is creepy and manipulative. But who am I to judge? :-)
+
+= Can I make a small donation to you for assisting my marketing effort? =
+
+You don't have to, but if you would like to buy me a coffee, beer, breakfast or more please visit https://adamainsworth.co.uk/donate
 
 == Screenshots ==
 

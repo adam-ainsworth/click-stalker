@@ -77,15 +77,18 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 			$uri = rtrim($_SERVER['REQUEST_URI'], '/' );
 			$prefix = '/wp-content/uploads';
 			$click_prefix = '/click';
+			$options = get_option( 'click_stalker_options' );
+			$tracking_code = $options['tracking_code'];
 
-			// is it a call to the click URI
-			if( strpos( strtolower( $uri ), $click_prefix ) === 0) {
+			// is it a call to the click URI?
+			if( $tracking_code && strpos( strtolower( $uri ), $click_prefix ) === 0 ) {
 				// if so, extract the destination URI
 				$forward_path = $prefix . substr($uri, strlen($click_prefix) );
 
 				// the fire the click tracker and set a JS forwarder to the destination
+
+				echo($tracking_code); // THIS IS SPECIFICALLY OUTPUTTING HTML, JS ETC SO MUST REMAIN UNESCAPED
 			?>
-				<p>CODE GOES HERE</p>
 				<p>Redirecting...</p>
 				<script>window.addEventListener('load', function () { setTimeout( function(){ window.location.replace('<?php echo($forward_path); ?>'); }, 100); } );</script>	
 			<?php 
@@ -160,9 +163,9 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 			);
 		
 			add_settings_field( 
-				'plugins', 
-				__( 'Plugin paths', 'click-stalker' ), 
-				[__CLASS__, 'plugins_render'], 
+				'tracking_code', 
+				__( 'Tracking Code', 'click-stalker' ), 
+				[__CLASS__, 'tracking_code_render'], 
 				'click_stalker_options', 
 				'click_stalker_options_section' 
 			);
@@ -185,14 +188,15 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 		
 		// render settings section
 		public static function settings_render() { 
-			?><p><strong><?php echo __( 'SETTINGS PAGE TEXT.', 'click-stalker' ); ?></strong></p><?php
+			?><p><strong><?php echo __( 'Add the HTML for your tracking code below.', 'click-stalker' ); ?></strong></p><?php
 		}
 		
 		// render settings fields
-		public static function plugins_render() {
+		public static function tracking_code_render() {
 			$options = get_option( 'click_stalker_options' );
+			 // THIS IS SPECIFICALLY OUTPUTTING HTML, JS ETC SO MUST REMAIN UNESCAPED
 			?>
-			<textarea cols='80' rows='5' name='click_stalker_options[plugins]'><?php echo $options['plugins']; ?></textarea>
+			<textarea cols='80' rows='5' name='click_stalker_options[tracking_code]'><?php echo $options['tracking_code']; ?></textarea>
 			<?php
 		}		
 	}
