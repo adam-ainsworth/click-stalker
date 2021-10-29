@@ -58,9 +58,7 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 
 		public static function init() {
 			add_action( 'parse_request', [__CLASS__, 'click_tracker'] );
-			add_action( 'wp_head', [__CLASS__, 'click_tracker_converter'] );
 			add_action( 'wp_enqueue_scripts', [__CLASS__, 'scripts'] );
-
 
 			add_filter( 'plugin_action_links', [__CLASS__, 'add_links'], 10, 2 );
 			add_action( 'admin_menu', [__CLASS__, 'add_admin_menu'] );
@@ -68,14 +66,13 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 		}
 
 		function scripts() {
-			wp_deregister_script('jquery');
-			wp_enqueue_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js', array(), null, true);
+			wp_enqueue_script( 'click-stalker', plugin_dir_url( __FILE__ ) . 'click-stalker.js', ['jquery'], false, false );
 		}
 
 		// This code intercepts all calls to /click, extracts the target URI, fires the JS click tracker and then forwards 
 		public static function click_tracker() {
 			$uri = rtrim($_SERVER['REQUEST_URI'], '/' );
-			$prefix = '/wp-content/uploads';
+			$prefix = parse_url( wp_upload_dir()['url'] )['path'];
 			$click_prefix = '/click';
 			$options = get_option( 'click_stalker_options' );
 			$tracking_code = $options['tracking_code'];
@@ -97,38 +94,6 @@ if ( ! class_exists( 'Click_Stalker' ) ) {
 			}
 		}
 
-			// uses jQuery to dynamically convert all A tags on a page that go to items in the uploads to redirect via the click tracker
-			// should work with any method of putting assets on the page
-
-			// jqueryDefer() allows you to wait for jQuery to load before running the function. This means it is a early as possible
-			public static function click_tracker_converter() {
-			?>
-				<script>
-					function jqueryDefer(method) {
-						if (window.$) {
-							method(window);
-						} else {
-							setTimeout(function() { jqueryDefer(method) }, 50);
-						}
-					}
-
-					jqueryDefer(
-						function() {
-							$(document).ready( function() {
-								$('a').each(function() {
-									var uri = $(this).attr('href'), prefix = '/wp-content/uploads', click_prefix = '/click';
-									
-									if( uri.startsWith(prefix) ) {
-										$(this).attr('href', click_prefix + uri.substring(prefix.length) + '/', '_blank');
-									}
-								});
-							});
-						}
-					);
-				</script>
-			<?php
-		}
-				
 		// add links to section on plugins page
 		public static function add_links( $links, $file ) {
 			if ( $file === 'click-stalker/click-stalker.php' && current_user_can( 'manage_options' ) ) {	
